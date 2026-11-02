@@ -18,40 +18,69 @@ class DetailScreen extends StatelessWidget {
         title: Text(destination.name),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              destination.name,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8.0),
-            Row(
-              children: [
-                const Icon(
-                  Icons.location_on,
-                  size: 20,
-                  color: Colors.lightBlue,
-                ),
-                const SizedBox(width: 4.0),
-                Text(
-                  destination.location,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[700],
+            Hero(
+              tag: destination.id,
+              child: SizedBox(
+                height: 260,
+                width: double.infinity,
+                child: Image.network(
+                  destination.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.lightBlue[50],
+                      child: const Icon(
+                        Icons.landscape,
+                        size: 64,
+                        color: Colors.lightBlue,
                       ),
+                    );
+                  },
                 ),
-              ],
+              ),
             ),
-            const SizedBox(height: 16.0),
-            const Divider(),
-            const SizedBox(height: 16.0),
-            Text(
-              destination.description,
-              style: Theme.of(context).textTheme.bodyLarge,
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    destination.name,
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        size: 20,
+                        color: Colors.lightBlue,
+                      ),
+                      const SizedBox(width: 4.0),
+                      Text(
+                        destination.location,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Colors.grey[700],
+                                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Divider(),
+                  const SizedBox(height: 16.0),
+                  Text(
+                    destination.description,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

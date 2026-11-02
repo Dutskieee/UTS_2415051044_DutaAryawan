@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import '../providers/travel_provider.dart';
 import '../widgets/travel_card.dart';
 
@@ -41,8 +42,25 @@ class HomeScreen extends StatelessWidget {
       body: Consumer<TravelProvider>(
         builder: (context, travelProvider, child) {
           if (travelProvider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: 6,
+              itemBuilder: (context, index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Card(
+                    margin: const EdgeInsets.all(8.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: const SizedBox(
+                      height: 200,
+                      width: double.infinity,
+                    ),
+                  ),
+                );
+              },
             );
           }
 
@@ -77,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 5 / 2,
+                    childAspectRatio: 4 / 3,
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                   ),
