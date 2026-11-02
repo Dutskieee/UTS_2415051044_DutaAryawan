@@ -67,17 +67,18 @@ class PackingScreen extends StatelessWidget {
 
                 if (items.isEmpty) {
                   return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.backpack_outlined,
-                            size: 72,
+                            size: 52,
                             color: Colors.lightBlue.withValues(alpha: 0.5),
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 12.0),
                           Text(
                             'Belum ada barang bawaan di daftar Anda',
                             textAlign: TextAlign.center,
@@ -96,7 +97,10 @@ class PackingScreen extends StatelessWidget {
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
+                  ),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
@@ -149,4 +153,3 @@ class PackingScreen extends StatelessWidget {
     );
   }
 }
-

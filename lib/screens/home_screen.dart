@@ -184,72 +184,81 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: Consumer<TravelProvider>(
                 builder: (context, travelProvider, child) {
-                  if (travelProvider.isLoading) {
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(20.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                        childAspectRatio: 0.82,
-                      ),
-                      itemCount: 6,
-                      itemBuilder: (context, index) {
-                        return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(22.0),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final bool isWide = constraints.maxWidth > 600;
+                      final int crossAxisCount = isWide ? 4 : 2;
+                      final double childAspectRatio = isWide ? 0.9 : 0.82;
+
+                      if (travelProvider.isLoading) {
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(20.0),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            crossAxisSpacing: 16.0,
+                            mainAxisSpacing: 16.0,
+                            childAspectRatio: childAspectRatio,
+                          ),
+                          itemCount: isWide ? 8 : 6,
+                          itemBuilder: (context, index) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(22.0),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }
+
+                      if (travelProvider.destinations.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(24.0),
+                            child: Text(
+                              'Gagal memuat data',
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         );
-                      },
-                    );
-                  }
+                      }
 
-                  if (travelProvider.destinations.isEmpty) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          'Gagal memuat data',
-                          textAlign: TextAlign.center,
+                      final destinations = travelProvider.filteredDestinations;
+
+                      if (destinations.isEmpty) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(24.0),
+                            child: Text(
+                              'Destinasi tidak ditemukan',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GridView.builder(
+                        padding:
+                            const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 24.0),
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 16.0,
+                          mainAxisSpacing: 16.0,
+                          childAspectRatio: childAspectRatio,
                         ),
-                      ),
-                    );
-                  }
-
-                  final destinations = travelProvider.filteredDestinations;
-
-                  if (destinations.isEmpty) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24.0),
-                        child: Text(
-                          'Destinasi tidak ditemukan',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }
-
-                  return GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(20.0, 8.0, 20.0, 24.0),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.0,
-                      mainAxisSpacing: 16.0,
-                      childAspectRatio: 0.82,
-                    ),
-                    itemCount: destinations.length,
-                    itemBuilder: (context, index) {
-                      return _buildDestinationCard(
-                        context,
-                        destinations[index],
+                        itemCount: destinations.length,
+                        itemBuilder: (context, index) {
+                          return _buildDestinationCard(
+                            context,
+                            destinations[index],
+                          );
+                        },
                       );
                     },
                   );
