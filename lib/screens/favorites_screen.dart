@@ -5,6 +5,49 @@ import '../providers/travel_provider.dart';
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
 
+  void _confirmDelete(BuildContext context, String destinationId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Hapus dari favorit?'),
+          content: const Text(
+            'Apakah Anda yakin ingin menghapus destinasi ini dari daftar favorit?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+                await Provider.of<TravelProvider>(
+                  context,
+                  listen: false,
+                ).deleteFromFavorites(destinationId);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Berhasil dihapus'),
+                    ),
+                  );
+                }
+              },
+              child: const Text(
+                'Yes',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +95,8 @@ class FavoritesScreen extends StatelessWidget {
                   ? item
                   : <String, dynamic>{};
 
+              final String destinationId =
+                  fav['destination_id']?.toString() ?? '';
               final String name =
                   fav['name']?.toString() ?? 'Destinasi Tanpa Nama';
               final String location =
@@ -68,11 +113,13 @@ class FavoritesScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 110,
-                      height: 95,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: SizedBox(
+                      width: 70,
+                      height: 70,
                       child: imageUrl.isNotEmpty
                           ? Image.network(
                               imageUrl,
@@ -82,7 +129,6 @@ class FavoritesScreen extends StatelessWidget {
                                   color: Colors.lightBlue[50],
                                   child: const Icon(
                                     Icons.landscape,
-                                    size: 40,
                                     color: Colors.lightBlue,
                                   ),
                                 );
@@ -92,61 +138,42 @@ class FavoritesScreen extends StatelessWidget {
                               color: Colors.lightBlue[50],
                               child: const Icon(
                                 Icons.landscape,
-                                size: 40,
                                 color: Colors.lightBlue,
                               ),
                             ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(14.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 6.0),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  size: 16,
-                                  color: Colors.lightBlue,
-                                ),
-                                const SizedBox(width: 4.0),
-                                Expanded(
-                                  child: Text(
-                                    location,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Colors.grey[700],
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                  ),
+                  title: Text(
+                    name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                      ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Colors.lightBlue,
+                        ),
+                        const SizedBox(width: 4.0),
+                        Expanded(
+                          child: Text(
+                            location,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 16.0),
-                      child: Icon(
-                        Icons.favorite,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                  ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      _confirmDelete(context, destinationId);
+                    },
+                  ),
                 ),
               );
             },
@@ -156,4 +183,3 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
-

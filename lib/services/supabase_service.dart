@@ -28,5 +28,16 @@ class SupabaseService {
       rethrow;
     }
   }
-}
 
+  Future<void> removeFavorite(String destinationId) async {
+    try {
+      await _supabase
+          .from('favorites')
+          .delete()
+          .eq('destination_id', destinationId);
+    } catch (e) {
+      debugPrint('Error saat removeFavorite: $e');
+      rethrow;
+    }
+  }
+}

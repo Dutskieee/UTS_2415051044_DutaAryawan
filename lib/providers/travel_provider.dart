@@ -50,4 +50,10 @@ class TravelProvider extends ChangeNotifier {
     await loadFavorites();
     notifyListeners();
   }
+
+  Future<void> deleteFromFavorites(String destinationId) async {
+    await _supabaseService.removeFavorite(destinationId);
+    await loadFavorites();
+    notifyListeners();
+  }
 }
