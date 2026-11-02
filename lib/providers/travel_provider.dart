@@ -56,4 +56,10 @@ class TravelProvider extends ChangeNotifier {
     await loadFavorites();
     notifyListeners();
   }
+
+  Future<void> updateFavoriteNote(int id, String note) async {
+    await _supabaseService.updateNote(id, note);
+    await loadFavorites();
+    notifyListeners();
+  }
 }

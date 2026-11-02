@@ -7,7 +7,8 @@ class SupabaseService {
 
   Future<List<dynamic>> getFavorites() async {
     try {
-      final response = await _supabase.from('favorites').select();
+      final response =
+          await _supabase.from('favorites').select().order('id', ascending: true);
       return response;
     } catch (e) {
       debugPrint('Error saat getFavorites: $e');
@@ -37,6 +38,18 @@ class SupabaseService {
           .eq('destination_id', destinationId);
     } catch (e) {
       debugPrint('Error saat removeFavorite: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateNote(int id, String note) async {
+    try {
+      await _supabase
+          .from('favorites')
+          .update({'personal_note': note})
+          .eq('id', id);
+    } catch (e) {
+      debugPrint('Error saat updateNote: $e');
       rethrow;
     }
   }

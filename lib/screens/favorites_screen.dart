@@ -5,6 +5,64 @@ import '../providers/travel_provider.dart';
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
 
+  void _showEditNoteDialog(
+    BuildContext context,
+    int id,
+    String currentNote,
+  ) {
+    final TextEditingController noteController = TextEditingController(
+      text: currentNote == 'Belum ada catatan' ? '' : currentNote,
+    );
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Edit Catatan Perjalanan'),
+          content: TextField(
+            controller: noteController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              hintText: 'Tulis catatan rencana perjalanan Anda...',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final String updatedNote = noteController.text.trim().isEmpty
+                    ? 'Belum ada catatan'
+                    : noteController.text.trim();
+
+                Navigator.pop(dialogContext);
+
+                await Provider.of<TravelProvider>(
+                  context,
+                  listen: false,
+                ).updateFavoriteNote(id, updatedNote);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Catatan berhasil diperbarui'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _confirmDelete(BuildContext context, String destinationId) {
     showDialog(
       context: context,
@@ -95,6 +153,9 @@ class FavoritesScreen extends StatelessWidget {
                   ? item
                   : <String, dynamic>{};
 
+              final int id = fav['id'] is int
+                  ? fav['id'] as int
+                  : int.tryParse(fav['id']?.toString() ?? '0') ?? 0;
               final String destinationId =
                   fav['destination_id']?.toString() ?? '';
               final String name =
@@ -102,6 +163,10 @@ class FavoritesScreen extends StatelessWidget {
               final String location =
                   fav['location']?.toString() ?? 'Indonesia';
               final String imageUrl = fav['image_url']?.toString() ?? '';
+              final String personalNote =
+                  (fav['personal_note']?.toString().trim().isNotEmpty ?? false)
+                      ? fav['personal_note'].toString()
+                      : 'Belum ada catatan';
 
               return Card(
                 elevation: 3,
@@ -151,28 +216,67 @@ class FavoritesScreen extends StatelessWidget {
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 4.0),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.location_on,
-                          size: 16,
-                          color: Colors.lightBlue,
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: Colors.lightBlue,
+                            ),
+                            const SizedBox(width: 4.0),
+                            Expanded(
+                              child: Text(
+                                location,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4.0),
-                        Expanded(
-                          child: Text(
-                            location,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        const SizedBox(height: 6.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.sticky_note_2_outlined,
+                              size: 16,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 4.0),
+                            Expanded(
+                              child: Text(
+                                personalNote,
+                                style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _confirmDelete(context, destinationId);
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        tooltip: 'Edit Catatan',
+                        onPressed: () {
+                          _showEditNoteDialog(context, id, personalNote);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        tooltip: 'Hapus Favorit',
+                        onPressed: () {
+                          _confirmDelete(context, destinationId);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               );
