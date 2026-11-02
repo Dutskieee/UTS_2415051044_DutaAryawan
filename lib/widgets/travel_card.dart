@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import '../models/destination.dart';
 import '../screens/detail_screen.dart';
 
 class TravelCard extends StatelessWidget {
-  final String destinationName;
+  final Destination destination;
 
   const TravelCard({
     super.key,
-    required this.destinationName,
+    required this.destination,
   });
 
   @override
@@ -24,21 +25,32 @@ class TravelCard extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => DetailScreen(
-                destinationName: destinationName,
+                destination: destination,
               ),
             ),
           );
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Center(
-            child: Text(
-              destinationName,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                destination.name,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                destination.location,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[700],
+                    ),
+              ),
+            ],
           ),
         ),
       ),
