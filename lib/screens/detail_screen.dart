@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/destination.dart';
+import '../providers/travel_provider.dart';
 
 class DetailScreen extends StatelessWidget {
   final Destination destination;
@@ -30,7 +32,11 @@ class DetailScreen extends StatelessWidget {
             const SizedBox(height: 8.0),
             Row(
               children: [
-                const Icon(Icons.location_on, size: 20, color: Colors.lightBlue),
+                const Icon(
+                  Icons.location_on,
+                  size: 20,
+                  color: Colors.lightBlue,
+                ),
                 const SizedBox(width: 4.0),
                 Text(
                   destination.location,
@@ -49,6 +55,20 @@ class DetailScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await context.read<TravelProvider>().addToFavorite(destination);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Berhasil disimpan ke Favorit!'),
+              ),
+            );
+          }
+        },
+        tooltip: 'Simpan ke Favorit',
+        child: const Icon(Icons.favorite),
       ),
     );
   }
