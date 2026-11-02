@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/travel_provider.dart';
 import 'favorites_screen.dart';
 import 'home_screen.dart';
+import 'packing_screen.dart';
 import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,10 +16,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    FavoritesScreen(),
-    ProfileScreen(),
+  late final List<Widget> _screens = [
+    const HomeScreen(),
+    const FavoritesScreen(),
+    PackingScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -62,6 +64,11 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Favorit',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.backpack_outlined),
+            activeIcon: Icon(Icons.backpack),
+            label: 'Packing',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
             label: 'Profil',
@@ -71,4 +78,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-

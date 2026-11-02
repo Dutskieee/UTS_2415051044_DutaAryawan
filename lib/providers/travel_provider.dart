@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
+import '../models/packing_item.dart';
 import '../services/api_service.dart';
 import '../services/supabase_service.dart';
 
@@ -9,11 +10,13 @@ class TravelProvider extends ChangeNotifier {
 
   List<Destination> _destinations = [];
   List<dynamic> _favorites = [];
+  final List<PackingItem> _packingList = [];
   bool _isLoading = true;
   String _searchQuery = '';
 
   List<Destination> get destinations => _destinations;
   List<dynamic> get favorites => _favorites;
+  List<PackingItem> get packingList => _packingList;
   bool get isLoading => _isLoading;
   String get searchQuery => _searchQuery;
 
@@ -35,6 +38,30 @@ class TravelProvider extends ChangeNotifier {
 
   void searchDestinations(String query) {
     _searchQuery = query;
+    notifyListeners();
+  }
+
+  void addItem(String name) {
+    if (name.trim().isEmpty) return;
+    _packingList.add(
+      PackingItem(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: name.trim(),
+      ),
+    );
+    notifyListeners();
+  }
+
+  void toggleItem(String id) {
+    final index = _packingList.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      _packingList[index].isChecked = !_packingList[index].isChecked;
+      notifyListeners();
+    }
+  }
+
+  void deleteItem(String id) {
+    _packingList.removeWhere((item) => item.id == id);
     notifyListeners();
   }
 
