@@ -38,18 +38,16 @@ class TravelProvider extends ChangeNotifier {
   Future<void> loadFavorites() async {
     try {
       _favorites = await _supabaseService.getFavorites();
-      notifyListeners();
     } catch (e) {
       debugPrint('Error di TravelProvider.loadFavorites: $e');
+    } finally {
+      notifyListeners();
     }
   }
 
   Future<void> addToFavorite(Destination dest) async {
-    try {
-      await _supabaseService.addFavorite(dest);
-      await loadFavorites();
-    } catch (e) {
-      debugPrint('Error di TravelProvider.addToFavorite: $e');
-    }
+    await _supabaseService.addFavorite(dest);
+    await loadFavorites();
+    notifyListeners();
   }
 }

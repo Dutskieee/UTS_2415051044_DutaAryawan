@@ -58,13 +58,27 @@ class DetailScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await context.read<TravelProvider>().addToFavorite(destination);
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Berhasil disimpan ke Favorit!'),
-              ),
-            );
+          try {
+            await Provider.of<TravelProvider>(
+              context,
+              listen: false,
+            ).addToFavorite(destination);
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Berhasil disimpan ke Favorit!'),
+                ),
+              );
+            }
+          } catch (e) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Gagal menyimpan ke Favorit: $e'),
+                ),
+              );
+            }
           }
         },
         tooltip: 'Simpan ke Favorit',
