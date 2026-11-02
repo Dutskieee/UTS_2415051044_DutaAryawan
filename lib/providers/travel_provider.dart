@@ -10,14 +10,32 @@ class TravelProvider extends ChangeNotifier {
   List<Destination> _destinations = [];
   List<dynamic> _favorites = [];
   bool _isLoading = true;
+  String _searchQuery = '';
 
   List<Destination> get destinations => _destinations;
   List<dynamic> get favorites => _favorites;
   bool get isLoading => _isLoading;
+  String get searchQuery => _searchQuery;
+
+  List<Destination> get filteredDestinations {
+    if (_searchQuery.trim().isEmpty) {
+      return _destinations;
+    }
+    final query = _searchQuery.toLowerCase();
+    return _destinations.where((destination) {
+      return destination.name.toLowerCase().contains(query) ||
+          destination.location.toLowerCase().contains(query);
+    }).toList();
+  }
 
   TravelProvider() {
     loadDestinations();
     loadFavorites();
+  }
+
+  void searchDestinations(String query) {
+    _searchQuery = query;
+    notifyListeners();
   }
 
   Future<void> loadDestinations() async {
