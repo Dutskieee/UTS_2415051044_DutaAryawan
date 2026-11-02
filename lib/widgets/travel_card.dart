@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/detail_screen.dart';
 
 class TravelCard extends StatelessWidget {
   final String destinationName;
@@ -16,19 +17,31 @@ class TravelCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Text(
-            destinationName,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailScreen(
+                destinationName: destinationName,
+              ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Text(
+              destinationName,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
           ),
         ),
       ),
     );
   }
 }
-

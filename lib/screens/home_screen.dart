@@ -20,6 +20,31 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Travel Planner'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              child: Text(
+                'Menu Travel',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Tentang Aplikasi'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {
