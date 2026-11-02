@@ -8,9 +8,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final travelProvider = context.watch<TravelProvider>();
-    final destinations = travelProvider.destinations;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Travel Planner'),
@@ -41,40 +38,61 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: travelProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth < 600) {
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: destinations.length,
-                    itemBuilder: (context, index) {
-                      return TravelCard(
-                        destination: destinations[index],
-                      );
-                    },
-                  );
-                } else {
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 5 / 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemCount: destinations.length,
-                    itemBuilder: (context, index) {
-                      return TravelCard(
-                        destination: destinations[index],
-                      );
-                    },
-                  );
-                }
-              },
-            ),
+      body: Consumer<TravelProvider>(
+        builder: (context, travelProvider, child) {
+          if (travelProvider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (travelProvider.destinations.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Gagal memuat data',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          final destinations = travelProvider.destinations;
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: destinations.length,
+                  itemBuilder: (context, index) {
+                    return TravelCard(
+                      destination: destinations[index],
+                    );
+                  },
+                );
+              } else {
+                return GridView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 5 / 2,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: destinations.length,
+                  itemBuilder: (context, index) {
+                    return TravelCard(
+                      destination: destinations[index],
+                    );
+                  },
+                );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 }

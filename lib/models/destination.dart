@@ -14,12 +14,16 @@ class Destination {
   });
 
   factory Destination.fromJson(Map<String, dynamic> json) {
+    final String id = json['id']?.toString() ?? '0';
+    final String name = json['name']?.toString() ?? 'Nama Tidak Tersedia';
+
     return Destination(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      location: json['location'] as String? ?? '',
-      imageUrl: json['imageUrl'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      id: id,
+      name: name,
+      location: 'Indonesia',
+      imageUrl: 'https://picsum.photos/seed/${json['id']}/400/300',
+      description:
+          'Jelajahi destinasi wisata dan kebudayaan yang ada di provinsi ${json['name']}.',
     );
   }
 
@@ -33,4 +37,3 @@ class Destination {
     };
   }
 }
-
