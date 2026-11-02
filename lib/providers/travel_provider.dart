@@ -14,11 +14,16 @@ class TravelProvider extends ChangeNotifier {
   bool _isLoading = true;
   String _searchQuery = '';
 
+  String _userName = 'I Made Duta Aryawan';
+  String _userBio = 'Suka menjelajah destinasi baru.';
+
   List<Destination> get destinations => _destinations;
   List<dynamic> get favorites => _favorites;
   List<PackingItem> get packingList => _packingList;
   bool get isLoading => _isLoading;
   String get searchQuery => _searchQuery;
+  String get userName => _userName;
+  String get userBio => _userBio;
 
   List<Destination> get filteredDestinations {
     if (_searchQuery.trim().isEmpty) {
@@ -34,6 +39,16 @@ class TravelProvider extends ChangeNotifier {
   TravelProvider() {
     loadDestinations();
     loadFavorites();
+  }
+
+  void updateProfile(String name, String bio) {
+    if (name.trim().isNotEmpty) {
+      _userName = name.trim();
+    }
+    if (bio.trim().isNotEmpty) {
+      _userBio = bio.trim();
+    }
+    notifyListeners();
   }
 
   void searchDestinations(String query) {

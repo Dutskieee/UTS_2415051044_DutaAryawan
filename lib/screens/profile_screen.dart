@@ -1,16 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/travel_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  void _showMenuSnackBar(BuildContext context, String menuName) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Fitur $menuName akan tersedia di update berikutnya!'),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
+  void _showEditProfileDialog(BuildContext context, TravelProvider provider) {
+    final TextEditingController nameController = TextEditingController(
+      text: provider.userName,
+    );
+    final TextEditingController bioController = TextEditingController(
+      text: provider.userBio,
+    );
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: const Text(
+            'Edit Profil',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nama Lengkap',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: bioController,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                provider.updateProfile(
+                  nameController.text,
+                  bioController.text,
+                );
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -19,128 +75,91 @@ class ProfileScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F9FC),
       appBar: AppBar(
-        title: const Text('Profil Pengguna'),
+        title: const Text('Profil Saya'),
         backgroundColor: colorScheme.inversePrimary,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
+      body: Consumer<TravelProvider>(
+        builder: (context, provider, child) {
+          return Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  vertical: 28.0,
-                  horizontal: 20.0,
+                  vertical: 36.0,
+                  horizontal: 24.0,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 20.0,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     CircleAvatar(
-                      radius: 54,
+                      radius: 56,
                       backgroundColor: colorScheme.primaryContainer,
                       backgroundImage: const NetworkImage(
-                        'https://picsum.photos/seed/2415051044/300/300',
+                        'https://picsum.photos/seed/travelprofile/300/300',
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 20.0),
                     Text(
-                      'I Made Duta Aryawan',
+                      provider.userName,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6.0),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Text(
-                        'NIM: 2415051044',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
                     const SizedBox(height: 10.0),
                     Text(
-                      'Pendidikan Teknik Informatika (PTI-5-IKI) - Universitas Pendidikan Ganesha',
+                      provider.userBio,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium
-                          ?.copyWith(color: Colors.grey[700]),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                    ),
+                    const SizedBox(height: 28.0),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          _showEditProfileDialog(context, provider);
+                        },
+                        icon: const Icon(Icons.edit_outlined),
+                        label: const Text(
+                          'Edit Profil',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20.0),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.edit_outlined,
-                      color: colorScheme.primary,
-                    ),
-                    title: const Text('Edit Profil'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showMenuSnackBar(context, 'Edit Profil'),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: Icon(
-                      Icons.settings_outlined,
-                      color: colorScheme.primary,
-                    ),
-                    title: const Text('Pengaturan'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showMenuSnackBar(context, 'Pengaturan'),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: Icon(
-                      Icons.help_outline,
-                      color: colorScheme.primary,
-                    ),
-                    title: const Text('Pusat Bantuan'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showMenuSnackBar(context, 'Pusat Bantuan'),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.logout, color: Colors.redAccent),
-                    title: const Text(
-                      'Logout',
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.chevron_right,
-                      color: Colors.redAccent,
-                    ),
-                    onTap: () => _showMenuSnackBar(context, 'Logout'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
